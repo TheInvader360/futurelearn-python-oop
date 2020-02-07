@@ -10,3 +10,5 @@ Run:
     python3 02-draw_shapes/my_drawing.py
     python3 03-adventure_game/main.py
     python3 04-adventure_game_continued/main.py
+    python3 05-adventure_game_library/main.py
+    cd ./05-adventure_game_library/agl/ && python3 -m pydoc -w ./
