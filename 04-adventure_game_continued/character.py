@@ -6,10 +6,7 @@ class Character():
         self.conversation = None
 
     def describe(self):
-        print(self.name + " is here!" + " (" + self.description + ")")
-
-    def set_conversation(self, conversation):
-        self.conversation = conversation
+        print("'" + self.name + "' is here!" + " (" + self.description + ")")
 
     def talk(self):
         if self.conversation is not None:
@@ -21,26 +18,32 @@ class Character():
         print(self.name + " doesn't want to fight with you")
         return True
 
+    def set_conversation(self, conversation):
+        self.conversation = conversation
+
 
 class Enemy(Character):
+
+    defeated_total = 0
 
     def __init__(self, char_name, char_description):
         super().__init__(char_name, char_description)
         self.weakness = None
+
+    def fight(self, combat_item):
+        if combat_item == self.weakness:
+            print("You smite " + self.name + " with the " + combat_item)
+            Enemy.defeated_total += 1
+            return True
+        else:
+            print(self.name + " crushes you, puny adventurer!")
+            return False
 
     def set_weakness(self, weakness):
         self.weakness = weakness
 
     def get_weakness(self):
         return self.weakness
-
-    def fight(self, combat_item):
-        if combat_item == self.weakness:
-            print("You smite " + self.name + " with the " + combat_item)
-            return True
-        else:
-            print(self.name + " crushes you, puny adventurer!")
-            return False
 
 
 class Friend(Character):

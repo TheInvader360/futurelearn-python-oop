@@ -1,5 +1,6 @@
 from room import Room
 from character import Character, Enemy, Friend
+from item import Item
 
 kitchen = Room("Kitchen")
 kitchen.set_description("A dank and dirty room buzzing with flies.")
@@ -28,45 +29,76 @@ kitchen.set_character(vlad)
 dining_hall.set_character(dave)
 ballroom.set_character(catrina)
 
+bat = Item("bat", "A solid looking cricket bat")
+stake = Item("stake", "A wooden stake, sharpened at one end")
+
+ballroom.set_item(bat)
+dining_hall.set_item(stake)
+
 current_room = kitchen
-dead = False
+inventory = []
+game_over = False
 
-while dead == False:
+while game_over == False:
     print("\n")
-    current_room.get_details()
+    current_room.describe()
 
-    inhabitant = current_room.get_character()
-    if inhabitant is not None:
-        inhabitant.describe()
+    current_room_character = current_room.get_character()
+    if current_room_character is not None:
+        current_room_character.describe()
+
+    current_room_item = current_room.get_item()
+    if current_room_item is not None:
+        current_room_item.describe()
 
     command = input("> ")
 
-    if command in ["n", "s", "e", "w"]:
+    if command in ["n", "s", "e", "w"]: #north/south/east/west
         current_room = current_room.move(command)
-    elif command == "t":
-        if inhabitant == None:
+    elif command == "t": #talk
+        if current_room_character == None:
             print("There's nobody here to talk to!")
         else:
-            inhabitant.talk()
-    elif command == "f":
-        if inhabitant == None or isinstance(inhabitant, Friend):
+            current_room_character.talk()
+    elif command == "f": #fight
+        if current_room_character == None or isinstance(current_room_character, Friend):
             print("There's nobody here to fight!")
         else:
             print("Choose your weapon...")
-            fight_with = input()
-            if inhabitant.fight(fight_with) == True:
-                print("A winner is you!")
-                current_room.set_character(None)
+            weapon = input()
+            if weapon in inventory:
+                if current_room_character.fight(weapon) == True:
+                    print("A winner is you!")
+                    current_room.set_character(None)
+                    if Enemy.defeated_total == 2:
+                        print("Congratulations, you defeated all the enemies!")
+                        game_over = True
+                else:
+                    print("Game over, man. Game over!")
+                    game_over = True
             else:
-                print("Game over, man. Game over!")
-                dead = True
-    elif command == "h":
-        if inhabitant == None:
+                print("You haven't got a '" + weapon + "' in your inventory!")
+    elif command == "h": #hug
+        if current_room_character == None:
             print("There's nobody here to hug!")
         else:
-            if isinstance(inhabitant, Enemy):
+            if isinstance(current_room_character, Enemy):
                 print("Danger, Will Robinson!")
             else:
-                inhabitant.hug()
+                current_room_character.hug()
+    elif command == "g": #get
+        if current_room_item == None:
+            print("There's no gettable item in this room!")
+        else:
+            print("You got the " + current_room_item.get_name())
+            inventory.append(current_room_item.get_name())
+            current_room.set_item(None)
+    elif command == "i": #inventory
+        if len(inventory) == 0:
+            print("Your inventory is empty!")
+        else:
+            print("Your inventory:")
+            for item in inventory:
+                print(item)
     else:
         print("¯\_(ツ)_/¯")

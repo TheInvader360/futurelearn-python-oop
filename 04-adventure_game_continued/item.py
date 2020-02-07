@@ -1,8 +1,11 @@
 class Item():
 
-    def __init__(self):
-        self.name = None
-        self.description = None
+    def __init__(self, item_name, item_description):
+        self.name = item_name
+        self.description = item_description
+
+    def describe(self):
+        print("There is a '" + self.name + "' here!" + " (" + self.description + ")")
 
     def get_name(self):
         return self.name
